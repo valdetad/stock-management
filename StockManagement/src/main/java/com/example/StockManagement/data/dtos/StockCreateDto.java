@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 
 public class StockCreateDto {
     private Integer quantity;
+    private Long marketId;
+    private Long productId;
+
 }

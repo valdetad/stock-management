@@ -3,6 +3,7 @@ package com.example.StockManagement.data.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,4 +20,15 @@ public class Purchase {
     @Temporal(TemporalType.DATE)
     private Date purchaseDate;
 
+    @ManyToOne
+    @JoinColumn(name = "market_id", nullable = false)
+    private Market market;
+
+    @ManyToMany
+    @JoinTable(
+            name = "purchase_product",
+            joinColumns = @JoinColumn(name = "purchase_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> products;
 }
