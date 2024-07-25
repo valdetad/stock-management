@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.Set;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-public enum PurchaseStatusCreateDto {
-;   private Long id;
+public class PurchaseStatusCreateDto {
+    private Long id;
     private PurchaseStatus status;
     private Date purchaseDate;
     private Long marketId;
