@@ -2,8 +2,9 @@ package com.example.StockManagement.service;
 
 import com.example.StockManagement.data.model.Category;
 import com.example.StockManagement.data.model.Product;
-import com.univocity.parsers.csv.ExcelParser;
-import com.univocity.parsers.csv.ExcelParserSettings;
+import com.univocity.parsers.csv.Csv;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,11 @@ public class ImportExportService {
             List<Product> productList = new ArrayList<>();
             InputStream inputStream = file.getInputStream();
 
-            ExcelParserSettings settings = new ExcelParserSettings();
+            CsvParserSettings settings = new CsvParserSettings();
             settings.setHeaderExtractionEnabled(true);
             settings.setSkipEmptyLines(true);
 
-            ExcelParser parser = new ExcelParser(settings);
+            CsvParser parser = new CsvParser(settings);
             List<String[]> allRows = parser.parseAll(new InputStreamReader(inputStream));
 
             for (String[] row : allRows) {
@@ -54,9 +55,7 @@ public class ImportExportService {
                     System.err.println("Error processing row: " + e.getMessage());
                 }
             }
-            System.out.println("HELLO");
-            System.out.println(productList.size());
-            return productList;
+
             if (!productList.isEmpty()) {
                 productService.saveAll(productList);
             }
