@@ -11,12 +11,14 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+    private final ImportExportService importExportService;
 
     @Autowired
-    private ImportExportService importExportService;
-
+    public ProductService(ProductRepository productRepository, ImportExportService importExportService) {
+        this.productRepository = productRepository;
+        this.importExportService = importExportService;
+    }
 
     public List<Product> findAll() {
         return productRepository.findAll();
@@ -28,10 +30,10 @@ public class ProductService {
         }
     }
 
-    public void importProducts(MultipartFile file) {
+    public List<Product> importProducts(MultipartFile file) throws Exception {
         List<Product> products = importExportService.parseProductExcel(file);
-
         saveAll(products);
-
+        return products;
     }
 }
+
