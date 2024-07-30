@@ -2,15 +2,16 @@ package com.example.StockManagement.service;
 
 import com.example.StockManagement.data.model.Category;
 import com.example.StockManagement.data.model.Product;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ImportExportService {
@@ -18,59 +19,76 @@ public class ImportExportService {
     public List<Product> parseProductExcel(MultipartFile file) {
         List<Product> productList = new ArrayList<>();
 
-        try (InputStream inputStream = file.getInputStream()) {
-            CsvParserSettings settings = createCsvParserSettings();
-            CsvParser parser = new CsvParser(settings);
-            List<String[]> allRows = parser.parseAll(new InputStreamReader(inputStream));
+        try (InputStream inputStream = file.getInputStream();
+             //Apache POI class for handling Excel files
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
 
-            for (int i = 0; i < allRows.size(); i++) {
-                String[] row = allRows.get(i);
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+
+            if (rowIterator.hasNext()) {
+                rowIterator.next();
+            }
+
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
                 try {
-                    Product product = createProductFromRow(row, i + 1);
-                    productList.add(product);
+                    productList.add(createProductFromRow(row));
                 } catch (Exception e) {
-                    System.err.println("Error processing row " + (i + 1) + ": " + e.getMessage());
+                    System.err.println("Error processing row " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
+
         } catch (Exception e) {
-            throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to process Excel file: " + e.getMessage(), e);
         }
 
         return productList;
     }
 
-    private CsvParserSettings createCsvParserSettings() {
-        CsvParserSettings settings = new CsvParserSettings();
-        settings.setHeaderExtractionEnabled(true);
-        settings.setSkipEmptyLines(true);
-        return settings;
-    }
-
-    private Product createProductFromRow(String[] row, int rowNum) {
-        if (row.length < 5) {
-            throw new IllegalArgumentException("CSV row does not have enough columns");
-        }
-
+    private Product createProductFromRow(Row row) {
         Product product = new Product();
-        product.setName(row[0]);
 
-        try {
-            product.setCategory(Category.valueOf(row[1].toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid category at row " + rowNum + ": " + row[1]);
-            throw e;
-        }
-
-        try {
-            product.setPrice(Double.parseDouble(row[2]));
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid price at row " + rowNum + ": " + row[2]);
-            throw e;
-        }
-
-        product.setDescription(row[3]);
-        product.setBarcode(row[4]);
+        product.setName(getCellValue(row.getCell(1)));
+        product.setCategory(parseCategory(getCellValue(row.getCell(2))));
+        product.setPrice(parseDouble(getCellValue(row.getCell(3))));
+        product.setDescription(getCellValue(row.getCell(4)));
+        product.setBarcode(getCellValue(row.getCell(5)));
 
         return product;
+    }
+
+    private String getCellValue(Cell cell) {
+        return Optional.ofNullable(cell)
+                .map(this::extractCellValue)
+                .orElse("");
+    }
+
+    private String extractCellValue(Cell cell) {
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> Double.toString(cell.getNumericCellValue());
+            case BOOLEAN -> Boolean.toString(cell.getBooleanCellValue());
+            case FORMULA -> cell.getCellFormula();
+            default -> "";
+        };
+    }
+
+    private Category parseCategory(String categoryString) {
+        try {
+            return Category.valueOf(categoryString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid category: " + categoryString);
+            throw e;
+        }
+    }
+
+    private Double parseDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid price: " + value);
+            throw e;
+        }
     }
 }
