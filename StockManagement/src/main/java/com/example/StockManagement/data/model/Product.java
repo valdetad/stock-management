@@ -27,4 +27,7 @@ public class Product {
 
     @Column(name = "barcode")
     private String barcode;
+
+    @Column(name = "quantity")
+    private Integer quantity; 
 }

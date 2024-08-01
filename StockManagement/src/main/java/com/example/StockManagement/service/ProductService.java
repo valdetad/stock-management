@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 @Service
@@ -34,5 +35,9 @@ public class ProductService {
         List<Product> products = importExportService.parseProductExcel(file);
         saveAll(products);
         return products;
+    }
+
+    public ByteArrayInputStream exportProductsToExcel(List<Product> products) {
+        return importExportService.exportProductsToExcel(products);
     }
 }
