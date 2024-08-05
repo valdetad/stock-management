@@ -67,6 +67,17 @@ public class ProductController {
         }
     }
 
+    @PostMapping("/import")
+    public ResponseEntity<String> importProductsFromExcel(@RequestParam("file") MultipartFile file) {
+        try {
+            productService.importProducts(file);
+            return ResponseEntity.ok("Products imported successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to import products: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportProducts() {
         try (Workbook workbook = new XSSFWorkbook()) {
