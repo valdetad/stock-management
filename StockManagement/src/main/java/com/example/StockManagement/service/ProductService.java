@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -27,7 +27,7 @@ public class ProductService {
     }
 
     public Product findById(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return productRepository.findById(id).orElse(null);
     }
 
     public Product save(Product product) {
@@ -46,11 +46,22 @@ public class ProductService {
         return products;
     }
 
-    public ByteArrayInputStream exportProductsToExcel(List<Product> products) {
-        try {
-            return importExportService.exportProductsToExcel(products);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to export products to Excel", e);
+    public ByteArrayInputStream exportProductsToExcel(List<Product> products) throws Exception {
+        return importExportService.exportProductsToExcel(products);
+    }
+
+    public Product update(Long id, Product updatedProduct) {
+        Optional<Product> existingProductOptional = productRepository.findById(id);
+        if (existingProductOptional.isPresent()) {
+            Product existingProduct = existingProductOptional.get();
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setCategory(updatedProduct.getCategory());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setBarcode(updatedProduct.getBarcode());
+            existingProduct.setQuantity(updatedProduct.getQuantity());
+            return productRepository.save(existingProduct);
         }
+        return null;
     }
 }
