@@ -2,8 +2,12 @@ package com.example.StockManagement.controller;
 
 import com.example.StockManagement.data.model.Product;
 import com.example.StockManagement.service.ProductService;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -31,14 +36,10 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.findById(id);
-        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
-    }
-
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+        Optional<Product> product = productService.findById(id);
+        return product.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null));
     }
 
     @PostMapping("/upload")
@@ -54,25 +55,35 @@ public class ProductController {
 
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportProducts() {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            byte[] excelData = productService.exportProductsToExcel(productService.findAll()).readAllBytes();
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Products");
 
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=products.xlsx")
-                    .header("Content-Type", "application/octet-stream")
-                    .body(excelData);
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Product ID");
+            headerRow.createCell(1).setCellValue("Product Name");
+            headerRow.createCell(2).setCellValue("Price");
+
+            List<Product> products = productService.findAll();
+            int rowNum = 1;
+            for (Product product : products) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(product.getId());
+                row.createCell(1).setCellValue(product.getName());
+                row.createCell(2).setCellValue(product.getPrice());
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+
+            byte[] excelData = outputStream.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=products.xlsx");
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.update(id, product);
-        return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();
     }
 }

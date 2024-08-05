@@ -26,12 +26,14 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product findById(Long id) {
-        return productRepository.findById(id).orElse(null);
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
     }
 
-    public Product save(Product product) {
-        return productRepository.save(product);
+    public void save(Product product) {
+        if (product != null) {
+            productRepository.save(product);
+        }
     }
 
     public void saveAll(List<Product> products) {
@@ -46,22 +48,7 @@ public class ProductService {
         return products;
     }
 
-    public ByteArrayInputStream exportProductsToExcel(List<Product> products) throws Exception {
+    public ByteArrayInputStream exportProductsToExcel(List<Product> products) {
         return importExportService.exportProductsToExcel(products);
-    }
-
-    public Product update(Long id, Product updatedProduct) {
-        Optional<Product> existingProductOptional = productRepository.findById(id);
-        if (existingProductOptional.isPresent()) {
-            Product existingProduct = existingProductOptional.get();
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setCategory(updatedProduct.getCategory());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setDescription(updatedProduct.getDescription());
-            existingProduct.setBarcode(updatedProduct.getBarcode());
-            existingProduct.setQuantity(updatedProduct.getQuantity());
-            return productRepository.save(existingProduct);
-        }
-        return null;
     }
 }
