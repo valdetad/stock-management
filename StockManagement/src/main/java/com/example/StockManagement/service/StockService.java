@@ -40,14 +40,6 @@ public class StockService {
             headerRow.createCell(1).setCellValue("Quantity");
             headerRow.createCell(2).setCellValue("Product Barcode");
 
-//            int rowNum = 1;
-//            for (Stock stock : stocks) {
-//                Row row = sheet.createRow(rowNum++);
-//                row.createCell(0).setCellValue(stock.getMarket() != null ? stock.getMarket().getName() : "N/A");
-//                row.createCell(1).setCellValue(stock.getQuantity() != null ? stock.getQuantity() : 0);
-//                row.createCell(2).setCellValue(stock.getProduct() != null ? stock.getProduct().getBarcode() : "N/A");
-//            }
-
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
