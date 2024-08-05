@@ -50,7 +50,8 @@ public class ProductService {
         return products;
     }
 
-    public ByteArrayInputStream exportProductsToExcel(List<Product> products) {
+    public ByteArrayInputStream exportProductsToExcel() {
+        List<Product> products = findAll();
         return importExportService.exportProductsToExcel(products);
     }
 }

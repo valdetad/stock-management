@@ -26,6 +26,7 @@ public class ImportExportService {
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
 
+                // Skip header row
                 if (rowNumber == 0) {
                     rowNumber++;
                     continue;
@@ -56,23 +57,16 @@ public class ImportExportService {
             Sheet sheet = workbook.createSheet("Products");
 
             Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("ID");
-            headerRow.createCell(1).setCellValue("Name");
-            headerRow.createCell(2).setCellValue("Description");
-            headerRow.createCell(3).setCellValue("Price");
-            headerRow.createCell(4).setCellValue("Quantity");
+            headerRow.createCell(0).setCellValue("Product ID");
+            headerRow.createCell(1).setCellValue("Product Name");
+            headerRow.createCell(2).setCellValue("Price");
 
             int rowIndex = 1;
             for (Product product : products) {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(0).setCellValue(product.getId());
                 row.createCell(1).setCellValue(product.getName());
-                row.createCell(2).setCellValue(product.getDescription());
-                row.createCell(3).setCellValue(product.getPrice());
-
-
-                Integer quantity = product.getQuantity();
-                row.createCell(4).setCellValue(quantity != null ? quantity : 0);
+                row.createCell(2).setCellValue(product.getPrice());
             }
 
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
