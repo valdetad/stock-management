@@ -35,21 +35,18 @@ public class StockService {
         List<Stock> stocks = stockRepository.findByMarketId(marketId);
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Stock");
-
-            // Create header row
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Market Name");
             headerRow.createCell(1).setCellValue("Quantity");
             headerRow.createCell(2).setCellValue("Product Barcode");
 
-            // Populate rows with stock data
-            int rowNum = 1;
-            for (Stock stock : stocks) {
-                Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(stock.getMarket() != null ? stock.getMarket().getName() : "N/A");
-                row.createCell(1).setCellValue(stock.getQuantity() != null ? stock.getQuantity() : 0);
-                row.createCell(2).setCellValue(stock.getProduct() != null ? stock.getProduct().getBarcode() : "N/A");
-            }
+//            int rowNum = 1;
+//            for (Stock stock : stocks) {
+//                Row row = sheet.createRow(rowNum++);
+//                row.createCell(0).setCellValue(stock.getMarket() != null ? stock.getMarket().getName() : "N/A");
+//                row.createCell(1).setCellValue(stock.getQuantity() != null ? stock.getQuantity() : 0);
+//                row.createCell(2).setCellValue(stock.getProduct() != null ? stock.getProduct().getBarcode() : "N/A");
+//            }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);
