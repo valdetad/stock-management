@@ -40,6 +40,10 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
     public List<Product> importProducts(MultipartFile file) throws Exception {
         List<Product> products = importExportService.parseProductExcel(file);
         saveAll(products);
