@@ -28,7 +28,6 @@ public class StockService {
         return stockRepository.findByMarketId(marketId);
     }
 
-    // Export stock data to Excel
     public ByteArrayInputStream exportStockToExcel(List<Stock> stocks) {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Stock");
@@ -43,9 +42,9 @@ public class StockService {
             int rowNum = 1;
             for (Stock stock : stocks) {
                 Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(stock.getMarket().getName()); // Ensure Market has a getName() method
-                row.createCell(1).setCellValue(stock.getQuantity());
-                row.createCell(2).setCellValue(stock.getProduct().getBarcode()); // Ensure Product has a getBarcode() method
+                row.createCell(0).setCellValue(stock.getMarket() != null ? stock.getMarket().getName() : "N/A");
+                row.createCell(1).setCellValue(stock.getQuantity() != null ? stock.getQuantity() : 0);
+                row.createCell(2).setCellValue(stock.getProduct() != null ? stock.getProduct().getBarcode() : "N/A");
             }
 
             // Convert workbook to ByteArrayInputStream
