@@ -12,45 +12,43 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class StockService {
 
     private final StockRepository stockRepository;
-    private final Logger logger = Logger.getLogger(StockService.class.getName());
 
     @Autowired
     public StockService(StockRepository stockRepository) {
         this.stockRepository = stockRepository;
     }
 
+    // Retrieve all stock entries for a specific market
     public List<Stock> findByMarketId(Long marketId) {
-        List<Stock> stocks = stockRepository.findByMarketId(marketId);
-        logger.info("Fetched stocks: " + stocks);  // Log fetched stocks
-        return stocks;
+        return stockRepository.findByMarketId(marketId);
     }
 
+    // Export stock data to Excel
     public ByteArrayInputStream exportStockToExcel(List<Stock> stocks) {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Stock");
 
+            // Create header row
             Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Stock ID");
-            headerRow.createCell(1).setCellValue("Market ID");
-            headerRow.createCell(2).setCellValue("Product ID");
-            headerRow.createCell(3).setCellValue("Quantity");
+            headerRow.createCell(0).setCellValue("Market Name");
+            headerRow.createCell(1).setCellValue("Quantity");
+            headerRow.createCell(2).setCellValue("Product Barcode");
 
+            // Populate rows with stock data
             int rowNum = 1;
             for (Stock stock : stocks) {
-                logger.info("Writing stock to Excel: " + stock);  // Log each stock
                 Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(stock.getId());
-                row.createCell(1).setCellValue(stock.getMarket().getId());
-                row.createCell(2).setCellValue(stock.getProduct().getId());
-                row.createCell(3).setCellValue(stock.getQuantity());
+                row.createCell(0).setCellValue(stock.getMarket().getName()); // Ensure Market has a getName() method
+                row.createCell(1).setCellValue(stock.getQuantity());
+                row.createCell(2).setCellValue(stock.getProduct().getBarcode()); // Ensure Product has a getBarcode() method
             }
 
+            // Convert workbook to ByteArrayInputStream
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());

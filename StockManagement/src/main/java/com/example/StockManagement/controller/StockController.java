@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/markets")
 public class StockController {
 
     private final StockService stockService;
-    private final Logger logger = Logger.getLogger(StockController.class.getName());
 
     @Autowired
     public StockController(StockService stockService) {
@@ -26,23 +24,20 @@ public class StockController {
     }
 
     @GetMapping("/{id}/stock")
-    public ResponseEntity<byte[]> exportStock(@PathVariable Long id) {
-        List<Stock> stocks = stockService.findByMarketId(id);
-        logger.info("Fetched stocks for market ID " + id + ": " + stocks); // Log fetched stocks
-        if (stocks.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        ByteArrayInputStream excelData = stockService.exportStockToExcel(stocks);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=stock_report.xlsx");
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
-
+    public ResponseEntity<byte[]> getStockForMarket(@PathVariable Long id) {
         try {
-            return new ResponseEntity<>(excelData.readAllBytes(), headers, HttpStatus.OK);
+            List<Stock> stocks = stockService.findByMarketId(id);
+            ByteArrayInputStream in = stockService.exportStockToExcel(stocks);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=stock_report.xlsx");
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+            return new ResponseEntity<>(in.readAllBytes(), headers, HttpStatus.OK);
         } catch (Exception e) {
-            logger.severe("Error exporting stock to Excel: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 }
+
