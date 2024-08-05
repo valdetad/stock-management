@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -26,18 +26,18 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+    public Product findById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    public Product save(Product product) {
+        return productRepository.save(product);
     }
 
     public void saveAll(List<Product> products) {
         if (products != null && !products.isEmpty()) {
             productRepository.saveAll(products);
         }
-    }
-
-    public Product saveProduct(Product product) {
-        return productRepository.save(product);
     }
 
     public List<Product> importProducts(MultipartFile file) throws Exception {
@@ -47,6 +47,10 @@ public class ProductService {
     }
 
     public ByteArrayInputStream exportProductsToExcel(List<Product> products) {
-        return importExportService.exportProductsToExcel(products);
+        try {
+            return importExportService.exportProductsToExcel(products);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to export products to Excel", e);
+        }
     }
 }
