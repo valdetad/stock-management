@@ -14,12 +14,11 @@ public class Stock {
 
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Ensure proper loading of related entities
     @JoinColumn(name = "market_id", nullable = false)
     private Market market;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
 }

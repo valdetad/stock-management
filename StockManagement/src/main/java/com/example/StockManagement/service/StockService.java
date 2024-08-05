@@ -23,12 +23,16 @@ public class StockService {
         this.stockRepository = stockRepository;
     }
 
-    // Retrieve all stock entries for a specific market
     public List<Stock> findByMarketId(Long marketId) {
         return stockRepository.findByMarketId(marketId);
     }
 
-    public ByteArrayInputStream exportStockToExcel(List<Stock> stocks) {
+    public Stock save(Stock stock) {
+        return stockRepository.save(stock);
+    }
+
+    public ByteArrayInputStream exportStockToExcel(Long marketId) {
+        List<Stock> stocks = stockRepository.findByMarketId(marketId);
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Stock");
 
@@ -47,7 +51,6 @@ public class StockService {
                 row.createCell(2).setCellValue(stock.getProduct() != null ? stock.getProduct().getBarcode() : "N/A");
             }
 
-            // Convert workbook to ByteArrayInputStream
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
