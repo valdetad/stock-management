@@ -22,15 +22,11 @@ public class ImportExportService {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rows = sheet.iterator();
 
-            int rowNumber = 0;
+            if(rows.hasNext()) {
+                rows.next();
+            }
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
-
-                // Skip header row
-                if (rowNumber == 0) {
-                    rowNumber++;
-                    continue;
-                }
 
                 Product product = new Product();
                 product.setId((long) currentRow.getCell(0).getNumericCellValue());
@@ -42,7 +38,7 @@ public class ImportExportService {
                 if (quantityCell != null && quantityCell.getCellType() == CellType.NUMERIC) {
                     product.setQuantity((int) quantityCell.getNumericCellValue());
                 } else {
-                    product.setQuantity(null);
+                    product.setQuantity(0);
                 }
 
                 products.add(product);
