@@ -4,6 +4,7 @@ import com.example.StockManagement.data.model.Stock;
 import com.example.StockManagement.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,5 +20,10 @@ public class StockController {
     @GetMapping
     public List<Stock> getAllStocks() {
         return stockService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public List<Stock> getStockByMarketId(@PathVariable("id") Long marketId) {
+        return stockService.findByMarketId(marketId);
     }
 }

@@ -14,7 +14,11 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    public List<Stock> findAll(){
+    public List<Stock> findAll() {
         return stockRepository.findAll();
+    }
+
+    public List<Stock> findByMarketId(Long marketId) {
+        return stockRepository.findByMarketId(marketId);
     }
 }

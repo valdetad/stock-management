@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -23,6 +24,16 @@ public class ProductService {
 
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
+
+    public void save(Product product) {
+        if (product != null) {
+            productRepository.save(product);
+        }
     }
 
     public void saveAll(List<Product> products) {

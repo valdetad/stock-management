@@ -29,5 +29,5 @@ public class Product {
     private String barcode;
 
     @Column(name = "quantity")
-    private Integer quantity; 
+    private Integer quantity;
 }
