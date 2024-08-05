@@ -30,16 +30,14 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public void save(Product product) {
-        if (product != null) {
-            productRepository.save(product);
-        }
-    }
-
     public void saveAll(List<Product> products) {
         if (products != null && !products.isEmpty()) {
             productRepository.saveAll(products);
         }
+    }
+
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
 
     public List<Product> importProducts(MultipartFile file) throws Exception {
