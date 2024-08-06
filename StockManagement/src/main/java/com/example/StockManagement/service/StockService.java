@@ -12,35 +12,14 @@ public class StockService {
 
     public ByteArrayInputStream exportStockToExcel(Long marketId) {
         try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Stock Data");
-
-            Row marketNameRow = sheet.createRow(0);
-            marketNameRow.createCell(0).setCellValue("Stock Data for: " + getMarketName(marketId));
-
-            // Header
-            Row headerRow = sheet.createRow(2);
-            headerRow.createCell(0).setCellValue("ID");
-            headerRow.createCell(1).setCellValue("Product Name");
-            headerRow.createCell(2).setCellValue("Quantity");
-            headerRow.createCell(3).setCellValue("Product Barcode");
-
-            // Data rows
             if (marketId == 0) {
-                // Add data for all markets
-                addStockRow(sheet, 3, 1, "Smartphone", 10, "11564");
-                addStockRow(sheet, 4, 2, "Orange", 15, "11565");
-                addStockRow(sheet, 5, 3, "Tomato", 20, "11566");
-                addStockRow(sheet, 6, 4, "Apple", 25, "11567");
-            } else if (marketId == 1) {
-                addStockRow(sheet, 3, 1, "Smartphone", 10, "11564");
-            } else if (marketId == 2) {
-                addStockRow(sheet, 3, 2, "Orange", 15, "11565");
-            } else if (marketId == 3) {
-                addStockRow(sheet, 3, 3, "Tomato", 20, "11566");
-            } else if (marketId == 4) {
-                addStockRow(sheet, 3, 4, "Apple", 25, "11567");
+                createMarketSheet(workbook, 1L, "City Market");
+                createMarketSheet(workbook, 2L, "Main Market");
+                createMarketSheet(workbook, 3L, "Town Market");
+                createMarketSheet(workbook, 4L, "Local Market");
             } else {
-                throw new IllegalArgumentException("Invalid market ID");
+                // Single sheet for each market
+                createMarketSheet(workbook, marketId, getMarketName(marketId));
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -50,6 +29,39 @@ public class StockService {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to export stock data", e);
+        }
+    }
+
+    private void createMarketSheet(Workbook workbook, Long marketId, String marketName) {
+        Sheet sheet = workbook.createSheet(marketName);
+
+        Row marketNameRow = sheet.createRow(0);
+        marketNameRow.createCell(0).setCellValue("Market Name: " + marketName);
+
+        // Header
+        Row headerRow = sheet.createRow(2);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Product Name");
+        headerRow.createCell(2).setCellValue("Quantity");
+        headerRow.createCell(3).setCellValue("Product Barcode");
+
+        // Data rows
+        int rowNum = 3;
+        if (marketId == 1) {
+            addStockRow(sheet, rowNum++, 1, "Smartphone", 10, "11564");
+        } else if (marketId == 2) {
+            addStockRow(sheet, rowNum++, 2, "Orange", 15, "11565");
+        } else if (marketId == 3) {
+            addStockRow(sheet, rowNum++, 3, "Tomato", 20, "11566");
+        } else if (marketId == 4) {
+            addStockRow(sheet, rowNum++, 4, "Apple", 25, "11567");
+        } else if (marketId == 0) {
+            addStockRow(sheet, rowNum++, 1, "Smartphone", 10, "11564");
+            addStockRow(sheet, rowNum++, 2, "Orange", 15, "11565");
+            addStockRow(sheet, rowNum++, 3, "Tomato", 20, "11566");
+            addStockRow(sheet, rowNum++, 4, "Apple", 25, "11567");
+        } else {
+            throw new IllegalArgumentException("Invalid market ID");
         }
     }
 
