@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 
@@ -25,14 +26,28 @@ public class StockController {
     public ResponseEntity<byte[]> getStockByMarketId(@PathVariable Long id) {
         try {
             ByteArrayInputStream byteArrayInputStream = stockService.exportStockToExcel(id);
+            byte[] excelData = byteArrayInputStream.readAllBytes();
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=stock_report.xlsx");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=stock_report_" + id + ".xlsx");
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
 
-            return new ResponseEntity<>(byteArrayInputStream.readAllBytes(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/{id}/stock/import")
+    public ResponseEntity<String> importStock(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        try {
+            stockService.importStock(id, file);
+            return ResponseEntity.ok("Stock imported successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to import stock: " + e.getMessage());
         }
     }
 }

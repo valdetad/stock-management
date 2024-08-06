@@ -1,50 +1,76 @@
 package com.example.StockManagement.service;
 
-import com.example.StockManagement.data.model.Stock;
-import com.example.StockManagement.repository.StockRepository;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
+import java.util.Iterator;
 
 @Service
 public class StockService {
 
-    private final StockRepository stockRepository;
+    // This method imports stock data from an Excel file
+    public void importStock(Long marketId, MultipartFile file) throws Exception {
+        try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
 
-    @Autowired
-    public StockService(StockRepository stockRepository) {
-        this.stockRepository = stockRepository;
-    }
+            Iterator<Row> rowIterator = sheet.iterator();
 
-    public List<Stock> findByMarketId(Long marketId) {
-        return stockRepository.findByMarketId(marketId);
-    }
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
 
-    public Stock save(Stock stock) {
-        return stockRepository.save(stock);
+                // Process each row and cell as needed
+                for (Cell cell : row) {
+                    switch (cell.getCellType()) {
+                        case STRING:
+                            String stringValue = cell.getStringCellValue();
+                            break;
+                        case NUMERIC:
+                            double numericValue = cell.getNumericCellValue();
+                            break;
+                        case BOOLEAN:
+                            boolean booleanValue = cell.getBooleanCellValue();
+                            break;
+                        case FORMULA:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     public ByteArrayInputStream exportStockToExcel(Long marketId) {
-        List<Stock> stocks = stockRepository.findByMarketId(marketId);
         try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Stock");
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Market Name");
-            headerRow.createCell(1).setCellValue("Quantity");
-            headerRow.createCell(2).setCellValue("Product Barcode");
+            Sheet sheet = workbook.createSheet("Stock Data");
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            workbook.write(outputStream);
-            return new ByteArrayInputStream(outputStream.toByteArray());
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("ID");
+            headerRow.createCell(1).setCellValue("Market Name");
+            headerRow.createCell(2).setCellValue("Quantity");
+            headerRow.createCell(3).setCellValue("Product Barcode");
+
+
+            // Example data - replace with actual data retrieval
+            Row dataRow = sheet.createRow(1);
+            dataRow.createCell(0).setCellValue("1");
+            dataRow.createCell(1).setCellValue("City Market");
+            dataRow.createCell(2).setCellValue("10");
+            dataRow.createCell(3).setCellValue("11564");
+
+            // Write the workbook to an output stream
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            workbook.write(out);
+
+            return new ByteArrayInputStream(out.toByteArray());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to export stock to Excel", e);
+            e.printStackTrace(); // Log the exception for debugging
+            throw new RuntimeException("Failed to export stock data", e);
         }
     }
 }
