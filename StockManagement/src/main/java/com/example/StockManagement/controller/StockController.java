@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 
@@ -38,16 +37,5 @@ public class StockController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    @PostMapping("/{id}/stock/import")
-    public ResponseEntity<String> importStock(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        try {
-            stockService.importStock(id, file);
-            return ResponseEntity.ok("Stock imported successfully");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to import stock: " + e.getMessage());
-        }
-    }
 }
+
