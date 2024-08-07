@@ -1,3 +1,4 @@
+
 package com.example.StockManagement.data.model;
 
 import jakarta.persistence.*;
