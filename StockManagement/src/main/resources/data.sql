@@ -1,9 +1,9 @@
 INSERT INTO product
-    (name,
-     category,
-     price,
-     description,
-     barcode)
+(name,
+ category,
+ price,
+ description,
+ barcode)
 
 VALUES ('Example Product',
         'Category1',
