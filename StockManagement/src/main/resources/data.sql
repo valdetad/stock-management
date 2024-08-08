@@ -4,9 +4,9 @@ INSERT INTO MARKET (ID, OTHER_COLUMNS) VALUES (2, 'Default Market 2');
 
 -- Insert product data with valid categories
 INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE)
-VALUES ('Example Product', 'ELECTRONICS', 19.99, 'This is an example product description.', '1234567890123');
+VALUES ('Samsung Galaxy S21', 'ELECTRONICS', 80.99, 'Latest Samsung Galaxy S21 with 128GB storage and 8GB RAM', '1234567890123');
 INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE)
-VALUES ('Another Product', 'GROCERIES', 29.99, 'This is another product description.', '9876543210987');
+VALUES ('Iphone 14 pro', 'ELECTRONICS', 1000.23, '''Apple iPhone 14 Pro with 128GB storage and 6GB RAM', '9876543210987');
 
 
 -- Insert stock data
