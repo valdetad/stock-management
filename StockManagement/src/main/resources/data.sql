@@ -1,13 +1,20 @@
-INSERT INTO product
-    (name,
-     category,
-     price,
-     description,
-     barcode)
+-- Insert market data
+INSERT INTO MARKET (ID, OTHER_COLUMNS) VALUES (1, 'Default Market 1');
+INSERT INTO MARKET (ID, OTHER_COLUMNS) VALUES (2, 'Default Market 2');
 
-VALUES ('Example Product',
-        'Category1',
-        19.99,
-        'This is an example product description.',
-        '1234567890123');
+-- Insert product data with valid categories
+INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE)
+VALUES ('Example Product', 'ELECTRONICS', 19.99, 'This is an example product description.', '1234567890123');
+INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE)
+VALUES ('Another Product', 'GROCERIES', 29.99, 'This is another product description.', '9876543210987');
 
+
+-- Insert stock data
+INSERT INTO STOCK (QUANTITY, MARKET_ID, PRODUCT_ID)
+VALUES (100, 1, 1);
+INSERT INTO STOCK (QUANTITY, MARKET_ID, PRODUCT_ID)
+VALUES (200, 1, 2);
+INSERT INTO STOCK (QUANTITY, MARKET_ID, PRODUCT_ID)
+VALUES (150, 2, 1);
+INSERT INTO STOCK (QUANTITY, MARKET_ID, PRODUCT_ID)
+VALUES (50, 2, 2);

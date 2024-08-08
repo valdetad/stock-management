@@ -11,4 +11,6 @@ public enum Category {
     TOMATO,
     POTATO,
     CLOTHING,
+    CATEGORY1,
+    CATEGORY2
 }
