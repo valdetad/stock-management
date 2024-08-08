@@ -22,7 +22,7 @@ public class StockController {
     @GetMapping("/{marketId}/stock")
     public ResponseEntity<InputStreamResource> exportStock(@PathVariable Long marketId) {
         try {
-            ByteArrayInputStream bais = stockService.exportStockToExcel(marketId); // This should match the method in StockService
+            ByteArrayInputStream bais = stockService.exportStockToExcel(marketId);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "attachment; filename=stock-data-for-market-" + marketId + ".xlsx");
 

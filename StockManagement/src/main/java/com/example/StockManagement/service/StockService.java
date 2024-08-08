@@ -32,7 +32,7 @@ public class StockService {
     }
 
     private void writeStockDataToSheet(Sheet sheet, List<Stock> stocks) {
-        // Create header row
+        // header row
         Row headerRow = sheet.createRow(0);
         headerRow.createCell(0).setCellValue("ID");
         headerRow.createCell(1).setCellValue("Quantity");
@@ -40,7 +40,6 @@ public class StockService {
         headerRow.createCell(3).setCellValue("Market ID");
         headerRow.createCell(4).setCellValue("Product ID");
 
-        // Populate data rows
         int rowNum = 1;
         for (Stock stock : stocks) {
             Row row = sheet.createRow(rowNum++);
@@ -76,7 +75,7 @@ public class StockService {
                 Long marketId = entry.getKey();
                 List<Stock> marketStocks = entry.getValue();
 
-                // Create a sheet for each market
+                // Creating sheet for each market
                 Sheet sheet = workbook.createSheet("Market " + marketId);
                 writeStockDataToSheet(sheet, marketStocks);
             }
