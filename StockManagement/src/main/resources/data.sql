@@ -1,19 +1,15 @@
--- Insert market data
-INSERT INTO MARKET (ID, OTHER_COLUMNS) VALUES (1, 'Market 1');
-INSERT INTO MARKET (ID, OTHER_COLUMNS) VALUES (2, 'Market 2');
+-- Insert data into MARKET table
+INSERT INTO MARKET (NAME) VALUES ('Town Market');
+INSERT INTO MARKET (NAME) VALUES ('City Market');
 
--- Insert product data with valid categories
-INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE)
-VALUES ('Samsung Galaxy S21', 'ELECTRONICS', 80.99, '1', '1234567890123');
-INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE)
-VALUES ('Iphone 14 pro', 'ELECTRONICS', 1000.23, 'Apple iPhone 14 Pro with 128GB storage and 6GB RAM', '9876543210987');
+-- Insert data into PRODUCT table
+INSERT INTO PRODUCT (NAME, CATEGORY, PRICE, DESCRIPTION, BARCODE) VALUES
+                                                                      ('Samsung Galaxy S21', 'Electronics', 799.99, 'Latest Samsung Galaxy phone', '1234567890'),
+                                                                      ('iPhone 14 Pro', 'Electronics', 999.99, 'Latest Apple iPhone', '0987654321');
 
--- Insert stock data
-INSERT INTO STOCK (QUANTITY, NAME, MARKET_ID, PRODUCT_ID)
-VALUES (100, 'Stock for Samsung Galaxy S21', 1, 1);
-INSERT INTO STOCK (QUANTITY, NAME, MARKET_ID, PRODUCT_ID)
-VALUES (200, 'Stock for iPhone 14 Pro', 1, 2);
-INSERT INTO STOCK (QUANTITY, NAME, MARKET_ID, PRODUCT_ID)
-VALUES (150, 'Stock for Samsung Galaxy S21 at Market 2', 2, 1);
-INSERT INTO STOCK (QUANTITY, NAME, MARKET_ID, PRODUCT_ID)
-VALUES (50, 'Stock for iPhone 14 Pro at Market 2', 2, 2);
+-- Insert data into STOCK table
+INSERT INTO STOCK (QUANTITY, NAME, MARKET_ID, PRODUCT_ID) VALUES
+                                                              (100, 'Samsung Galaxy S21', 1, 1),
+                                                              (200, 'iPhone 14 Pro', 1, 2),
+                                                              (150, 'Samsung Galaxy Note 5', 2, 1),
+                                                              (50, 'iPhone 13 Pro', 2, 2);
