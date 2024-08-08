@@ -1,4 +1,3 @@
-
 package com.example.StockManagement.data.model;
 
 import jakarta.persistence.*;
@@ -13,7 +12,11 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Integer quantity;
+
+    @Column(name = "name")
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "market_id", nullable = false)
