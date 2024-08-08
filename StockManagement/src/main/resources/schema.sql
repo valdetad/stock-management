@@ -19,13 +19,14 @@ CREATE TABLE PRODUCT (
                          BARCODE VARCHAR(255) UNIQUE
 );
 
--- Create STOCK table with NAME column
+-- Create STOCK table
 CREATE TABLE STOCK (
                        ID INT PRIMARY KEY AUTO_INCREMENT,
                        QUANTITY INT NOT NULL,
                        NAME VARCHAR(255),
                        MARKET_ID INT,
                        PRODUCT_ID INT,
+                       BARCODE VARCHAR(255),
                        FOREIGN KEY (MARKET_ID) REFERENCES MARKET(ID),
                        FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(ID)
 );

@@ -39,6 +39,7 @@ public class StockService {
         headerRow.createCell(2).setCellValue("Name");
         headerRow.createCell(3).setCellValue("Market ID");
         headerRow.createCell(4).setCellValue("Product ID");
+        headerRow.createCell(5).setCellValue("Barcode");
 
         int rowNum = 1;
         for (Stock stock : stocks) {
@@ -48,8 +49,10 @@ public class StockService {
             row.createCell(2).setCellValue(stock.getName());
             row.createCell(3).setCellValue(stock.getMarket().getId());
             row.createCell(4).setCellValue(stock.getProduct().getId());
+            row.createCell(5).setCellValue(stock.getBarcode());
         }
     }
+
 
     public ByteArrayInputStream exportStockToExcel(Long marketId) {
         List<Stock> stocks = getStockByMarketId(marketId);

@@ -18,6 +18,9 @@ public class Stock {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "barcode")
+    private String barcode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "market_id", nullable = false)
     private Market market;
