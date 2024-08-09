@@ -28,13 +28,14 @@ public class PurchaseService {
         DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         String currentDate = dateFormatter.format(new Date());
 
+        Paragraph paragraph = new Paragraph("Market: ");
+
+        document.add(paragraph);
+
         String title = "Purchase Date " + currentDate;
         Paragraph titleParagraph = new Paragraph(title);
         document.add(titleParagraph);
 
-        Paragraph paragraph = new Paragraph("This is the body of the document.");
-
-        document.add(paragraph);
         document.close();
     }
 
