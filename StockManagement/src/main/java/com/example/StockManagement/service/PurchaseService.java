@@ -22,14 +22,15 @@ public class PurchaseService {
 
     public void export(HttpServletResponse response) throws DocumentException, IOException {
         Document document = new Document(PageSize.A4);
-
         PdfWriter.getInstance(document, response.getOutputStream());
-
         document.open();
 
         DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         String currentDate = dateFormatter.format(new Date());
+
         String title = "Purchase Date " + currentDate;
+        Paragraph titleParagraph = new Paragraph(title);
+        document.add(titleParagraph);
 
         Paragraph paragraph = new Paragraph("This is the body of the document.");
 
