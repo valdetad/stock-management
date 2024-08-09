@@ -9,7 +9,7 @@ CREATE TABLE MARKET (
                         NAME VARCHAR(255) NOT NULL
 );
 
--- Create PRODUCT table
+-- PRODUCT table
 CREATE TABLE PRODUCT (
                          ID INT PRIMARY KEY AUTO_INCREMENT,
                          NAME VARCHAR(255) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE PRODUCT (
                          BARCODE VARCHAR(255) UNIQUE
 );
 
--- Create STOCK table
+-- STOCK table
 CREATE TABLE STOCK (
                        ID INT PRIMARY KEY AUTO_INCREMENT,
                        QUANTITY INT NOT NULL,
@@ -30,3 +30,5 @@ CREATE TABLE STOCK (
                        FOREIGN KEY (MARKET_ID) REFERENCES MARKET(ID),
                        FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(ID)
 );
+
+-- Purchase table
