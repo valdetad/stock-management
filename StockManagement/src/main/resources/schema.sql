@@ -32,3 +32,16 @@ CREATE TABLE STOCK (
 );
 
 -- Purchase table
+-- Create PURCHASE table
+CREATE TABLE PURCHASE (
+                          ID SERIAL PRIMARY KEY,
+                          MARKET_ID INT,
+                          PRODUCT_ID INT,
+                          PURCHASE_DATE DATE,
+                          QUANTITY INT,
+                          PRICE DECIMAL(10, 2),
+                          TOTAL DECIMAL(10, 2),
+                          STATUS VARCHAR(50),
+                          FOREIGN KEY (MARKET_ID) REFERENCES MARKET(ID),
+                          FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(ID)
+);
