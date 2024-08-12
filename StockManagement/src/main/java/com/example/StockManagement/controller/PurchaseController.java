@@ -1,36 +1,50 @@
 package com.example.StockManagement.controller;
 
 import com.example.StockManagement.service.PurchaseService;
-import com.itextpdf.text.DocumentException;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.ByteArrayInputStream;
 
 @RestController
-@RequestMapping("/api/purchase")
+@RequestMapping("/api/purchases")
 public class PurchaseController {
 
-    @Autowired
-    private PurchaseService purchaseService;
+    private final PurchaseService purchaseService;
 
+    public PurchaseController(PurchaseService purchaseService) {
+        this.purchaseService = purchaseService;
+    }
 
-    @GetMapping("/pdf/generate")
-    public void generatePDF(HttpServletResponse response) throws DocumentException, IOException {
-        response.setContentType("application/pdf");
-        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-        String currentDateTime = dateFormatter.format(new Date());
+    @GetMapping("/{marketId}/export")
+    public ResponseEntity<InputStreamResource> exportPurchases(@PathVariable Long marketId) {
+        try {
+            ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(marketId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=purchases-for-market-" + marketId + ".pdf");
 
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pdf_Purchase_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
+            return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-        purchaseService.export(response);
+    @GetMapping("/export-all")
+    public ResponseEntity<InputStreamResource> exportAllPurchases() {
+        try {
+            // Implement method to export all purchases
+            ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(null);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=all-purchases.pdf");
+
+            return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
