@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +53,6 @@ public class StockService {
             row.createCell(5).setCellValue(stock.getBarcode());
         }
     }
-
 
     public ByteArrayInputStream exportStockToExcel(Long marketId) {
         List<Stock> stocks = getStockByMarketId(marketId);
