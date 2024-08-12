@@ -28,7 +28,6 @@ public class PurchaseController {
 
             return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -43,7 +42,6 @@ public class PurchaseController {
 
             return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
