@@ -1,3 +1,4 @@
+
 package com.example.StockManagement.service;
 
 import com.example.StockManagement.data.model.Stock;
