@@ -63,7 +63,6 @@ public class StockService {
             workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -87,7 +86,6 @@ public class StockService {
             workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

@@ -1,8 +1,8 @@
 package com.example.StockManagement.controller;
 
 import com.example.StockManagement.service.PurchaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,13 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/purchases")
 public class PurchaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(PurchaseController.class);
 
     private final PurchaseService purchaseService;
 
@@ -33,7 +30,6 @@ public class PurchaseController {
 
             return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Error exporting purchases for marketId {}: {}", marketId, e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -47,7 +43,6 @@ public class PurchaseController {
 
             return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Error exporting all purchases: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
