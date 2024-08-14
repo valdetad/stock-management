@@ -45,3 +45,11 @@ CREATE TABLE PURCHASE (
                           FOREIGN KEY (MARKET_ID) REFERENCES MARKET(ID),
                           FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(ID)
 );
+
+CREATE TABLE purchase_product (
+                                  purchase_id BIGINT NOT NULL,
+                                  product_id BIGINT NOT NULL,
+                                  PRIMARY KEY (purchase_id, product_id),
+                                  FOREIGN KEY (purchase_id) REFERENCES purchase(id),
+                                  FOREIGN KEY (product_id) REFERENCES product(id)
+);
