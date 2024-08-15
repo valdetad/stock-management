@@ -37,7 +37,7 @@ public class PurchaseController {
     @GetMapping("/export-all")
     public ResponseEntity<InputStreamResource> exportAllPurchases() {
         try {
-            ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(null); // Adjust as needed
+            ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(null);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "attachment; filename=all-purchases.pdf");
 
