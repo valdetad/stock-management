@@ -11,11 +11,9 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class PurchaseCreateDto {
     private PurchaseStatus status;
     private Date purchaseDate;
     private Long marketId;
     private Set<Long> productIds;
-
 }

@@ -2,12 +2,13 @@ package com.example.StockManagement.data.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.util.Date;
 import java.util.Set;
 
 @Data
 @Entity
-@Table(name="purchase")
+@Table(name = "purchase")
 public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

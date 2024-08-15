@@ -1,8 +1,6 @@
 package com.example.StockManagement.controller;
 
 import com.example.StockManagement.service.PurchaseService;
-
-
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,27 +21,24 @@ public class PurchaseController {
 
     @GetMapping("/{marketId}/export")
     public ResponseEntity<InputStreamResource> exportPurchases(@PathVariable Long marketId) {
-        try {
-            ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(marketId);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=purchases-for-market-" + marketId + ".pdf");
-
-            return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return generateExportResponse(purchaseService.exportPurchasesToPdf(marketId),
+                "purchases-for-market-" + marketId + ".pdf");
     }
 
     @GetMapping("/export-all")
     public ResponseEntity<InputStreamResource> exportAllPurchases() {
-        try {
-            ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(null);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=all-purchases.pdf");
+        return generateExportResponse(purchaseService.exportPurchasesToPdf(null),
+                "all-purchases.pdf");
+    }
 
-            return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
-        } catch (Exception e) {
+    private ResponseEntity<InputStreamResource> generateExportResponse(ByteArrayInputStream bais,
+                                                                       String filename) {
+        if (bais == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + filename);
+        return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
     }
 }
