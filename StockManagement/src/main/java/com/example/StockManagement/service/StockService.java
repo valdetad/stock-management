@@ -1,16 +1,13 @@
-
 package com.example.StockManagement.service;
 
 import com.example.StockManagement.data.model.Stock;
 import com.example.StockManagement.repository.StockRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,29 +17,69 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    @Autowired
     public StockService(StockRepository stockRepository) {
         this.stockRepository = stockRepository;
     }
 
-    public List<Stock> getStockByMarketId(Long marketId) {
-        return stockRepository.findByMarketId(marketId);
+    public ByteArrayInputStream exportStockToExcel(Long marketId) {
+        List<Stock> stocks = stockRepository.findByMarketId(marketId);
+        return createExcel(stocks, "Stock for Market " + marketId);
     }
 
-    public List<Stock> getAllStock() {
-        return stockRepository.findAll();
+    public ByteArrayInputStream exportAllStockToExcel() {
+        List<Stock> stocks = stockRepository.findAll();
+        Map<Long, List<Stock>> stocksByMarket = groupStocksByMarket(stocks);
+        return createExcelForAllMarkets(stocksByMarket);
+    }
+
+    private ByteArrayInputStream createExcel(List<Stock> stocks, String sheetName) {
+        return createExcelWorkbook(new WorkbookOperation() {
+            @Override
+            public void performOperation(Workbook workbook) {
+                Sheet sheet = workbook.createSheet(sheetName);
+                writeStockDataToSheet(sheet, stocks);
+            }
+        });
+    }
+
+    private ByteArrayInputStream createExcelForAllMarkets(Map<Long, List<Stock>> stocksByMarket) {
+        return createExcelWorkbook(new WorkbookOperation() {
+            @Override
+            public void performOperation(Workbook workbook) {
+                for (Map.Entry<Long, List<Stock>> entry : stocksByMarket.entrySet()) {
+                    Long marketId = entry.getKey();
+                    List<Stock> marketStocks = entry.getValue();
+                    Sheet sheet = workbook.createSheet("Market " + marketId);
+                    writeStockDataToSheet(sheet, marketStocks);
+                }
+            }
+        });
+    }
+
+    private ByteArrayInputStream createExcelWorkbook(WorkbookOperation operation) {
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            operation.performOperation(workbook);
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void writeStockDataToSheet(Sheet sheet, List<Stock> stocks) {
-        // header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("ID");
-        headerRow.createCell(1).setCellValue("Quantity");
-        headerRow.createCell(2).setCellValue("Name");
-        headerRow.createCell(3).setCellValue("Market ID");
-        headerRow.createCell(4).setCellValue("Product ID");
-        headerRow.createCell(5).setCellValue("Barcode");
+        createHeaderRow(sheet);
+        populateStockRows(sheet, stocks);
+    }
 
+    private void createHeaderRow(Sheet sheet) {
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"ID", "Quantity", "Name", "Market ID", "Product ID", "Barcode"};
+        for (int i = 0; i < headers.length; i++) {
+            headerRow.createCell(i).setCellValue(headers[i]);
+        }
+    }
+
+    private void populateStockRows(Sheet sheet, List<Stock> stocks) {
         int rowNum = 1;
         for (Stock stock : stocks) {
             Row row = sheet.createRow(rowNum++);
@@ -55,38 +92,12 @@ public class StockService {
         }
     }
 
-    public ByteArrayInputStream exportStockToExcel(Long marketId) {
-        List<Stock> stocks = getStockByMarketId(marketId);
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Stock for Market " + marketId);
-            writeStockDataToSheet(sheet, stocks);
-            workbook.write(out);
-            return new ByteArrayInputStream(out.toByteArray());
-        } catch (Exception e) {
-            return null;
-        }
+    private Map<Long, List<Stock>> groupStocksByMarket(List<Stock> stocks) {
+        return stocks.stream()
+                .collect(Collectors.groupingBy(stock -> stock.getMarket().getId()));
     }
 
-    public ByteArrayInputStream exportAllStockToExcel() {
-        List<Stock> stocks = getAllStock();
-        // Group stocks by market ID
-        Map<Long, List<Stock>> stocksByMarket = stocks.stream()
-                .collect(Collectors.groupingBy(stock -> stock.getMarket().getId()));
-
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            for (Map.Entry<Long, List<Stock>> entry : stocksByMarket.entrySet()) {
-                Long marketId = entry.getKey();
-                List<Stock> marketStocks = entry.getValue();
-
-                // Creating sheet for each market
-                Sheet sheet = workbook.createSheet("Market " + marketId);
-                writeStockDataToSheet(sheet, marketStocks);
-            }
-
-            workbook.write(out);
-            return new ByteArrayInputStream(out.toByteArray());
-        } catch (Exception e) {
-            return null;
-        }
+    private interface WorkbookOperation {
+        void performOperation(Workbook workbook) throws Exception;
     }
 }

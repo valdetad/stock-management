@@ -21,27 +21,22 @@ public class StockController {
 
     @GetMapping("/{marketId}/stock")
     public ResponseEntity<InputStreamResource> exportStock(@PathVariable Long marketId) {
-        try {
-            ByteArrayInputStream bais = stockService.exportStockToExcel(marketId);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=stock-data-for-market-" + marketId + ".xlsx");
-
-            return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return generateExportResponse(stockService.exportStockToExcel(marketId),
+                "stock-data-for-market-" + marketId + ".xlsx");
     }
 
     @GetMapping("/stock")
     public ResponseEntity<InputStreamResource> exportAllStock() {
-        try {
-            ByteArrayInputStream bais = stockService.exportAllStockToExcel();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=all-stock-data.xlsx");
+        return generateExportResponse(stockService.exportAllStockToExcel(),
+                "all-stock-data.xlsx");
+    }
 
-            return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
-        } catch (Exception e) {
+    private ResponseEntity<InputStreamResource> generateExportResponse(ByteArrayInputStream bais, String filename) {
+        if (bais == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=" + filename);
+        return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
     }
 }

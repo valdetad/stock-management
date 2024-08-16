@@ -5,12 +5,10 @@ import com.example.StockManagement.data.model.Purchase;
 import com.example.StockManagement.data.model.Market;
 import com.example.StockManagement.data.model.Stock;
 import com.example.StockManagement.repository.MarketRepository;
-import com.example.StockManagement.repository.PurchaseRepository;
 import com.example.StockManagement.repository.StockRepository;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
@@ -20,32 +18,31 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class PurchaseService {
 
-    private final PurchaseRepository purchaseRepository;
     private final MarketRepository marketRepository;
     private final StockRepository stockRepository;
 
-    public PurchaseService(PurchaseRepository purchaseRepository, MarketRepository marketRepository,
-                           StockRepository stockRepository) {
-        this.purchaseRepository = purchaseRepository;
+    public PurchaseService(MarketRepository marketRepository, StockRepository stockRepository) {
         this.marketRepository = marketRepository;
         this.stockRepository = stockRepository;
     }
 
     public ByteArrayInputStream exportPurchasesToPdf(Long marketId) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Document document = createDocument(out);
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            String marketName = marketRepository.findById(marketId)
+                    .map(Market::getName)
+                    .orElse("Unknown Market");
             String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 
-            Optional<Market> marketOptional = marketRepository.findById(marketId);
-            String marketName = marketOptional.map(Market::getName).orElse("Unknown Market");
-
             addMarketInfo(document, marketName, currentDate);
-            addPurchaseTable(document, marketOptional.orElse(null));
+            addPurchaseTable(document, marketId);
 
             document.close();
             return new ByteArrayInputStream(out.toByteArray());
@@ -54,72 +51,59 @@ public class PurchaseService {
         }
     }
 
-    private Document createDocument(ByteArrayOutputStream out) throws DocumentException {
-        Document document = new Document();
-        PdfWriter.getInstance(document, out);
-        document.open();
-        return document;
-    }
-
-    private void addMarketInfo(Document document, String marketName, String currentDate)
-            throws DocumentException {
+    private void addMarketInfo(Document document, String marketName, String currentDate) throws DocumentException {
         document.add(new Paragraph("Market: " + marketName));
         document.add(new Paragraph("Purchase Date: " + currentDate));
+        document.add(new Paragraph(" "));
     }
 
-    private void addPurchaseTable(Document document, Market market)
-            throws DocumentException {
-        PdfPTable table = createTable();
-        double overallTotal = 0.0;
+    private void addPurchaseTable(Document document, Long marketId) throws DocumentException {
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        addTableHeaders(table);
 
-        if (market != null) {
-            for (Purchase purchase : market.getPurchases()) {
-                overallTotal += addPurchaseRows(table, purchase, market.getId());
-            }
-        }
+        double overallTotal = marketRepository.findById(marketId)
+                .map(market -> addMarketPurchases(table, market))
+                .orElse(0.0);
 
         addOverallTotalRow(table, overallTotal);
         document.add(table);
     }
 
-    private PdfPTable createTable() {
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100);
-        table.setSpacingBefore(10f);
-        table.setSpacingAfter(10f);
-
+    private void addTableHeaders(PdfPTable table) {
         table.addCell("Product Name");
         table.addCell("Quantity");
         table.addCell("Price");
         table.addCell("Total");
-
-        return table;
     }
 
-    private double addPurchaseRows(PdfPTable table, Purchase purchase, Long marketId) {
+    private double addMarketPurchases(PdfPTable table, Market market) {
         double overallTotal = 0.0;
 
-        for (Product product : purchase.getProducts()) {
-            Optional<Stock> stockOptional = stockRepository.findByProductIdAndMarketId(product.getId(), marketId);
-            int quantity = stockOptional.map(Stock::getQuantity).orElse(0);
-            double price = product.getPrice();
-            double total = quantity * price;
+        for (Purchase purchase : market.getPurchases()) {
+            for (Product product : purchase.getProducts()) {
+                int quantity = stockRepository.findByProductIdAndMarketId(product.getId(), market.getId())
+                        .map(Stock::getQuantity)
+                        .orElse(0);
+                double price = product.getPrice();
+                double total = quantity * price;
 
-            table.addCell(product.getName());
-            table.addCell(String.valueOf(quantity));
-            table.addCell(String.format("%.2f", price));
-            table.addCell(String.format("%.2f", total));
+                table.addCell(product.getName());
+                table.addCell(String.valueOf(quantity));
+                table.addCell(String.format("%.2f", price));
+                table.addCell(String.format("%.2f", total));
 
-            overallTotal += total;
+                overallTotal += total;
+            }
         }
 
         return overallTotal;
     }
 
     private void addOverallTotalRow(PdfPTable table, double overallTotal) {
-        PdfPCell totalCell = new PdfPCell(new Paragraph("Overall Total"));
-        totalCell.setColspan(3);
-        table.addCell(totalCell);
+        table.addCell("Overall Total");
+        table.addCell("");
+        table.addCell("");
         table.addCell(String.format("%.2f", overallTotal));
     }
 }
