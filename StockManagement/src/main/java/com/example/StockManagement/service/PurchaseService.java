@@ -18,12 +18,9 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class PurchaseService {
@@ -124,9 +121,5 @@ public class PurchaseService {
         totalCell.setColspan(3);
         table.addCell(totalCell);
         table.addCell(String.format("%.2f", overallTotal));
-    }
-
-    public List<Purchase> findAll() {
-        return purchaseRepository.findAll();
     }
 }

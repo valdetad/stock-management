@@ -25,12 +25,6 @@ public class PurchaseController {
                 "purchases-for-market-" + marketId + ".pdf");
     }
 
-    @GetMapping("/export-all")
-    public ResponseEntity<InputStreamResource> exportAllPurchases() {
-        return generateExportResponse(purchaseService.exportPurchasesToPdf(null),
-                "all-purchases.pdf");
-    }
-
     private ResponseEntity<InputStreamResource> generateExportResponse(ByteArrayInputStream bais,
                                                                        String filename) {
         if (bais == null) {
