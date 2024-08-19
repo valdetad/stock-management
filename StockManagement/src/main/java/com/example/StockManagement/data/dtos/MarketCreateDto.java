@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 
 public class MarketCreateDto {
     private String name;
-    private String location;
 }
