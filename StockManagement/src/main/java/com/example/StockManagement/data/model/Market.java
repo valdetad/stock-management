@@ -16,7 +16,7 @@ public class Market {
     private Long id;
 
     private String name;
-    private String location;
+    //private String location;
 
     @OneToMany(mappedBy = "market")
     private Set<Purchase> purchases;
