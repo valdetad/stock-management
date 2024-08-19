@@ -3,7 +3,6 @@ package com.example.StockManagement.controller;
 import com.example.StockManagement.service.StockService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +31,8 @@ public class StockController {
     }
 
     private ResponseEntity<InputStreamResource> generateExportResponse(ByteArrayInputStream bais, String filename) {
-        if (bais == null) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + filename);
-        return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(bais));
     }
 }
