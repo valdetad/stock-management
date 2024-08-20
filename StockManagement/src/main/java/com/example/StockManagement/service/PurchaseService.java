@@ -25,7 +25,8 @@ public class PurchaseService {
     private final MarketRepository marketRepository;
     private final StockRepository stockRepository;
 
-    public PurchaseService(MarketRepository marketRepository, StockRepository stockRepository) {
+    public PurchaseService(MarketRepository marketRepository, StockRepository stockRepository
+    ) {
         this.marketRepository = marketRepository;
         this.stockRepository = stockRepository;
     }
