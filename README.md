@@ -4,7 +4,7 @@
  * Date Created: 01.08.2024
  * Programming Language: Java
  * Framework: Spring Boot
- * IDE: Intellij 
+ * IDE: IntelliJ
 
 # About the Project
 This app makes managing stock easy with a simple interface for tracking inventory and products
