@@ -7,7 +7,7 @@
  * IDE: Intellij 
 
 # About the Project
-This app simplifies stock management with an easy-to-use interface for tracking inventory and managing products.
+This app makes managing stock easy with a simple interface for tracking inventory and products
 
 # Features
 * Purchase: Add, update, and export purchase records
