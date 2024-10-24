@@ -11,6 +11,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +23,10 @@ import java.util.Date;
 @Service
 public class PurchaseService {
 
-    private final MarketRepository marketRepository;
+    @Autowired
+    private MarketRepository marketRepository;
+
+    @Autowired
     private final StockRepository stockRepository;
 
     public PurchaseService(MarketRepository marketRepository, StockRepository stockRepository

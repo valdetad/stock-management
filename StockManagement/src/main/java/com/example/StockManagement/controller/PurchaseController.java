@@ -1,6 +1,7 @@
 package com.example.StockManagement.controller;
 
 import com.example.StockManagement.service.PurchaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,16 +14,17 @@ import java.io.ByteArrayInputStream;
 @RequestMapping("/api/purchases")
 public class PurchaseController {
 
-    private final PurchaseService purchaseService;
+    @Autowired
+    private PurchaseService purchaseService;
 
-    //Constructor dependency injection
-    public PurchaseController(PurchaseService purchaseService) {
-        this.purchaseService = purchaseService;
-    }
+//    //Constructor dependency injection
+//    public PurchaseController(PurchaseService purchaseService) {
+//        this.purchaseService = purchaseService;
+//    }
 
     @GetMapping("/{marketId}/export")
     public ResponseEntity<InputStreamResource> exportPurchases(@PathVariable Long marketId) {
-        //Generating a PDF of the purchases for specific market ID
+        //Generates a PDF of the purchases for specific market ID
         ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(marketId);
         if (bais == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -4,6 +4,7 @@ import com.example.StockManagement.data.model.Stock;
 import com.example.StockManagement.repository.StockRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -15,11 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class StockService {
 
-    private final StockRepository stockRepository;
-
-    public StockService(StockRepository stockRepository) {
-        this.stockRepository = stockRepository;
-    }
+    @Autowired
+    private StockRepository stockRepository;
 
     public ByteArrayInputStream exportStockToExcel(Long marketId) {
         List<Stock> stocks = stockRepository.findByMarketId(marketId);

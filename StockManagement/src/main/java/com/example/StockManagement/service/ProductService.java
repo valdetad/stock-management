@@ -13,14 +13,17 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
-    private final ImportExportService importExportService;
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ImportExportService importExportService;
 
     @Autowired
     public ProductService(ProductRepository productRepository, ImportExportService importExportService) {
         this.productRepository = productRepository;
         this.importExportService = importExportService;
-    }
+    } 
 
     public List<Product> findAll() {
         return productRepository.findAll();
