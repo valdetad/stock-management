@@ -26,7 +26,7 @@ public class StockController {
         return generateExportResponse(stockService.exportStockToExcel(marketId), filename);
     }
 
-    @GetMapping("/stock")
+    @GetMapping("/stock/export-to-excel")
     public ResponseEntity<InputStreamResource> exportAllStock() {
         return generateExportResponse(stockService.exportAllStockToExcel(),
                 "all-stock-data.xlsx");

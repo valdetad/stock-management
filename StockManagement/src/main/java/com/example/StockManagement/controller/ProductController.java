@@ -7,12 +7,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+@Controller
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -20,12 +22,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @ResponseBody
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.findAll();
         return ResponseEntity.ok(products);
     }
 
+    @ResponseBody
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productService.findById(id)
@@ -33,12 +37,14 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ResponseBody
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
+    @ResponseBody
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (productService.findById(id).isPresent()) {
@@ -49,6 +55,7 @@ public class ProductController {
         }
     }
 
+    @ResponseBody
     @PostMapping("/upload")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {
@@ -60,7 +67,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/export")
+    @ResponseBody
+    @GetMapping("/product/export-to-excel")
     public ResponseEntity<byte[]> exportProducts() {
         ByteArrayInputStream byteArrayInputStream = productService.exportProductsToExcel();
         byte[] excelData = byteArrayInputStream.readAllBytes();

@@ -23,6 +23,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
@@ -55,6 +59,17 @@
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13.2</version>
 		</dependency>
+			<!-- Jackson for JSON -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+			</dependency>
+
+			<!-- Jackson XML for XML support -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.dataformat</groupId>
+				<artifactId>jackson-dataformat-xml</artifactId>
+			</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

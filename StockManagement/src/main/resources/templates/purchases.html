@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Export Purchases</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border: none;
+            border-radius: 8px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<div class="container d-flex justify-content-center my-5">
+    <div class="col-md-8">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h2>Purchase Export Dashboard</h2>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-center mb-4">Select a market to download a detailed PDF report of all purchases.</p>
+                <form th:action="@{/purchases/{marketId}/export(marketId=${marketId})}" method="get">
+                    <div class="form-group">
+                        <label for="marketId" class="font-weight-bold">Market Selection</label>
+                        <select id="marketId" name="marketId" class="form-control form-control-lg" required>
+                            <option th:each="market : ${markets}"
+                                    th:value="${market.id}"
+                                    th:text="${market.name}">Market Name
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">Download PDF Report</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Display alert based on download status -->
+        <div class="alert alert-info mt-4 text-center" role="alert" th:if="${downloadStatus}">
+            <span th:text="${downloadStatus}">Your PDF is being generated.</span>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
