@@ -33,7 +33,7 @@
             </div>
             <div class="card-body p-4">
                 <p class="text-center mb-4">Select a market to download a detailed PDF report of all purchases.</p>
-                <form th:action="@{/purchases/{marketId}/export(marketId=${marketId})}" method="get">
+                <form th:action="@{/purchases/export}" method="get">
                     <div class="form-group">
                         <label for="marketId" class="font-weight-bold">Market Selection</label>
                         <select id="marketId" name="marketId" class="form-control form-control-lg" required>

@@ -21,18 +21,17 @@ public class PurchaseController {
     private PurchaseService purchaseService;
 
     @Autowired
-    private MarketRepository marketRepository; // Add this to fetch markets
+    private MarketRepository marketRepository;
 
     // Method to serve the Thymeleaf view
-    @GetMapping("/export")
+    @GetMapping
     public String showExportPurchasesPage(Model model) {
         model.addAttribute("markets", marketRepository.findAll());
-        return "purchases"; // This should match your Thymeleaf template name (exportPurchases.html)
+        return "purchases";  // This corresponds to purchases.html in the templates directory
     }
 
-    @ResponseBody
-    @GetMapping("/{marketId}/export")
-    public ResponseEntity<InputStreamResource> exportPurchases(@PathVariable Long marketId) {
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> exportPurchases(@RequestParam("marketId") Long marketId) {
         ByteArrayInputStream bais = purchaseService.exportPurchasesToPdf(marketId);
         if (bais == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
