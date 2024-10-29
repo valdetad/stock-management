@@ -1,15 +1,20 @@
 package com.example.StockManagement.controller;
 
+import com.example.StockManagement.data.model.Market;
+import com.example.StockManagement.repository.StockRepository;
+import com.example.StockManagement.service.MarketService;
 import com.example.StockManagement.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/markets")
@@ -17,6 +22,19 @@ public class StockController {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private StockRepository stockRepository;
+
+    @Autowired
+    private MarketService marketService;
+
+    @GetMapping("/stock")
+    public String showStockExportPage(Model model) {
+        List<Market> markets = marketService.findAll(); // Assuming you have a marketService
+        model.addAttribute("markets", markets);
+        return "stock"; // This should match the name of your HTML file (stock.html)
+    }
 
     @GetMapping("/{marketId}/stock")
     public ResponseEntity<InputStreamResource> exportStock(@PathVariable Long marketId) {

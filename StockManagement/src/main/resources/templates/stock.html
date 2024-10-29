@@ -2,25 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Stock Export Dashboard</title>
+    <title>Export Stock Data</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
     <style>
-        /* Background gradient with subtle pattern */
         body {
-            background: linear-gradient(135deg, #f8f9fa 40%, #e0e4e7 100%);
-            background-attachment: fixed;
+            background-color: #f8f9fa;
         }
-        .pattern-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-            opacity: 0.1;
-            pointer-events: none;
-        }
-        /* Card and button styling */
         .card {
             border: none;
             border-radius: 8px;
@@ -38,8 +25,6 @@
     </style>
 </head>
 <body>
-<div class="pattern-overlay"></div>
-
 <div class="container d-flex justify-content-center my-5">
     <div class="col-md-8">
         <div class="card shadow-lg">
@@ -47,31 +32,28 @@
                 <h2>Stock Export Dashboard</h2>
             </div>
             <div class="card-body p-4">
-                <p class="text-center mb-4">Select a market to download an Excel report of current stock.</p>
-                <form th:action="@{/api/markets/{marketId}/stock(marketId=${market.id})}" method="get">
+                <p class="text-center mb-4">Select a market to download stock data in Excel format.</p>
+                <form th:action="@{/api/markets/stock}" method="get">
                     <div class="form-group">
                         <label for="marketId" class="font-weight-bold">Market Selection</label>
                         <select id="marketId" name="marketId" class="form-control form-control-lg" required>
-                            <!-- Populate with available markets from the backend -->
                             <option th:each="market : ${markets}"
                                     th:value="${market.id}"
                                     th:text="${market.name}">Market Name
                             </option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">Download Stock Report</button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">Download Stock Data</button>
+                </form>
+                <form th:action="@{/api/markets/stock/export-to-excel}" method="get" class="mt-3">
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block">Download All Stock Data</button>
                 </form>
             </div>
         </div>
 
-        <!-- Export all stock button -->
-        <div class="text-center mt-4">
-            <a th:href="@{/api/markets/stock/export-to-excel}" class="btn btn-primary btn-lg">Export All Stock</a>
-        </div>
-
         <!-- Display alert based on download status -->
         <div class="alert alert-info mt-4 text-center" role="alert" th:if="${downloadStatus}">
-            <span th:text="${downloadStatus}">Your Excel report is being generated.</span>
+            <span th:text="${downloadStatus}">Your Excel file is being generated.</span>
         </div>
     </div>
 </div>

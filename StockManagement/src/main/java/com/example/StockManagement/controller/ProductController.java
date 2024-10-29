@@ -3,59 +3,57 @@ package com.example.StockManagement.controller;
 import com.example.StockManagement.data.model.Product;
 import com.example.StockManagement.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @ResponseBody
+    // Method to serve the Thymeleaf view for all products
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public String showProductsPage(Model model) {
         List<Product> products = productService.findAll();
-        return ResponseEntity.ok(products);
+        model.addAttribute("products", products);
+        return "products";  // This corresponds to products.html in the templates directory
     }
 
-    @ResponseBody
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return productService.findById(id)
-                .map(ResponseEntity::ok)
+        Optional<Product> product = productService.findById(id);
+        return product.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @ResponseBody
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
-    @ResponseBody
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (productService.findById(id).isPresent()) {
             productService.deleteProduct(id);
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
-    @ResponseBody
     @PostMapping("/upload")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {
@@ -67,16 +65,15 @@ public class ProductController {
         }
     }
 
-    @ResponseBody
-    @GetMapping("/product/export-to-excel")
-    public ResponseEntity<byte[]> exportProducts() {
+    @GetMapping("/export-to-excel")
+    public ResponseEntity<InputStreamResource> exportProducts() {
         ByteArrayInputStream byteArrayInputStream = productService.exportProductsToExcel();
-        byte[] excelData = byteArrayInputStream.readAllBytes();
+        if (byteArrayInputStream == null) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=products.xlsx");
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
-
-        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+        return new ResponseEntity<>(new InputStreamResource(byteArrayInputStream), headers, HttpStatus.OK);
     }
 }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background for contrast */
+        }
+        .container {
+            margin-top: 30px; /* Adds spacing from the top */
+        }
+        .alert {
+            margin-top: 20px; /* Adds space above alerts */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center mb-4">Product List</h1>
+
+    <!-- Alert for success/error messages -->
+    <div class="alert alert-success" th:if="${successMessage}" role="alert" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" role="alert" th:text="${errorMessage}"></div>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a th:href="@{/product/add}" class="btn btn-primary">Add New Product</a>
+        <form th:action="@{/api/products/upload}" method="post" enctype="multipart/form-data" class="ml-2">
+            <div class="input-group">
+                <input type="file" name="file" class="form-control" required>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-success">Upload Products</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.price}"></td>
+            <td>
+                <a th:href="@{/product/edit/{id}(id=${product.id})}" class="btn btn-warning">Edit</a>
+                <form th:action="@{/product/{id}/delete(id=${product.id})}" method="post" style="display:inline;">
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
