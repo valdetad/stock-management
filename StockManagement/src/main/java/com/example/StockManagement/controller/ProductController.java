@@ -29,10 +29,10 @@ public class ProductController {
     public String showProductsPage(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
-        return "products";  // This corresponds to products.html in the templates directory
+        return "products";
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Optional<Product> product = productService.findById(id);
         return product.map(ResponseEntity::ok)
@@ -44,6 +44,21 @@ public class ProductController {
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
+
+    // Show the form to add a new product
+    @GetMapping("/add")
+    public String showAddProductForm(Model model) {
+        model.addAttribute("product", new Product());
+        return "add-product";
+    }
+
+    // Handle form submission for adding a product
+    @PostMapping("/add")
+    public String addProduct(@ModelAttribute Product product) {
+        productService.saveProduct(product);
+        return "redirect:/products";
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {

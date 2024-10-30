@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/markets")
+@RequestMapping("/stocks")
 public class StockController {
 
     @Autowired
