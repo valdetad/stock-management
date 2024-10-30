@@ -2,13 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add New Product</title>
+    <title>Edit Product</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Add New Product</h2>
-    <form th:action="@{/products/add}" method="post" th:object="${product}">
+    <h2>Edit Product</h2>
+    <form th:action="@{/products/edit/{id}(id=${product.id})}" th:object="${product}" method="post">
+        <!-- Hidden input for the product ID -->
+        <input type="hidden" th:field="*{id}" />
+
         <div class="form-group">
             <label for="name">Product Name</label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required>
@@ -17,7 +20,7 @@
             <label for="price">Price</label>
             <input type="number" class="form-control" id="price" th:field="*{price}" required>
         </div>
-        <button type="submit" class="btn btn-primary">Add Product</button>
+        <button type="submit" class="btn btn-primary">Save</button>
         <a href="/products" class="btn btn-secondary">Cancel</a>
     </form>
 </div>

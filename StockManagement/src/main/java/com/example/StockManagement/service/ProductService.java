@@ -23,7 +23,7 @@ public class ProductService {
     public ProductService(ProductRepository productRepository, ImportExportService importExportService) {
         this.productRepository = productRepository;
         this.importExportService = importExportService;
-    } 
+    }
 
     public List<Product> findAll() {
         return productRepository.findAll();
@@ -41,6 +41,10 @@ public class ProductService {
 
     public Product saveProduct(Product product) {
         return productRepository.save(product);
+    }
+
+    public void updateProduct(Product product) {
+        productRepository.save(product); // This will update the product if it exists
     }
 
     public void deleteProduct(Long id) {

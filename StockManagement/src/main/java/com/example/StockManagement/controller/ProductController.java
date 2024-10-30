@@ -39,26 +39,38 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product savedProduct = productService.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
-    }
-
     // Show the form to add a new product
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new Product());
-        return "add-product";
+        return "add-product"; // View for adding a new product
     }
 
     // Handle form submission for adding a product
     @PostMapping("/add")
     public String addProduct(@ModelAttribute Product product) {
         productService.saveProduct(product);
-        return "redirect:/products";
+        return "redirect:/products"; // Redirect to product list after addition
     }
 
+    // Show the form to edit an existing product
+    @GetMapping("/edit/{id}")
+    public String showEditProductForm(@PathVariable Long id, Model model) {
+        Optional<Product> product = productService.findById(id);
+        if (product.isPresent()) {
+            model.addAttribute("product", product.get());
+            return "edit-product"; // View for editing a product
+        }
+        return "redirect:/products"; // Redirect if product not found
+    }
+
+    // Handle form submission for editing a product
+    @PostMapping("/edit/{id}")
+    public String updateProduct(@PathVariable("id") Long id, @ModelAttribute Product product) {
+        product.setId(id); // Ensure the product ID is set for updating
+        productService.updateProduct(product); // Your update logic
+        return "redirect:/products"; // Redirect after update
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {

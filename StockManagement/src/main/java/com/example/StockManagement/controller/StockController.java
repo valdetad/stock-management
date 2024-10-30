@@ -24,9 +24,6 @@ public class StockController {
     private StockService stockService;
 
     @Autowired
-    private StockRepository stockRepository;
-
-    @Autowired
     private MarketService marketService;
 
     @GetMapping("/stock")
