@@ -11,9 +11,6 @@
         .container {
             margin-top: 30px;
         }
-        .alert {
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
@@ -52,9 +49,6 @@
         if (confirm('Are you sure you want to delete this product?')) {
             fetch(`/products/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value // Include CSRF token if needed
-                }
             })
                 .then(response => {
                     if (response.ok) {
