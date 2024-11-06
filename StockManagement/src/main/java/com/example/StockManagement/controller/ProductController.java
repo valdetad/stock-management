@@ -2,11 +2,12 @@ package com.example.StockManagement.controller;
 
 import com.example.StockManagement.data.model.Product;
 import com.example.StockManagement.service.ProductService;
+import com.example.StockManagement.util.XMLToJSONConverter; // Import the utility class
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -81,7 +82,6 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-
     @PostMapping("/upload")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {
@@ -103,5 +103,18 @@ public class ProductController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=products.xlsx");
         return new ResponseEntity<>(new InputStreamResource(byteArrayInputStream), headers, HttpStatus.OK);
+    }
+
+    // New endpoint to convert XML to JSON
+    @PostMapping("/convert-xml-to-json")
+    public ResponseEntity<String> convertXmlToJson(@RequestBody String xml) {
+        try {
+            // Convert XML to JSON using the utility method
+            String json = XMLToJSONConverter.convertXMLToJSON(xml);
+            return ResponseEntity.ok(json); // Return the converted JSON
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to convert XML to JSON: " + e.getMessage());
+        }
     }
 }

@@ -36,9 +36,10 @@
             <td th:text="${product.name}"></td>
             <td th:text="${product.price}"></td>
             <td>
-                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">Edit</a>
+                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-success">Edit</a>
                 <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
             </td>
+
         </tr>
         </tbody>
     </table>
